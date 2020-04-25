@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Welocme to DataColl</title>
+
+
+
+</head>
+<body>
+<div class="se-pre-con"></div>
+
+{% block content %}
+
+
+
+<div class="dropdown">
+    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+      <span id="selected">Chose option</span><span class="caret"></span></a>
+  <ul class="dropdown-menu">
+    <li><a href="#" methods="POST" name="bse">BSE</a></li>
+    <li><a href="" methods="POST" name="nse">NSE</a></li>
+
+  </ul>
+</div>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="text" name="search" placeholder="Enter Company Name or Symbol">
+
+</form>
+
+{{ note }}
+
+</body>
+</html>
+<br>
+<br>
+<br>
+
+<table id="customers">
+  <tr>
+    <th>Title</th>
+    <th> Description</th>
+
+  </tr>
+  <tr>
+    <td>Market:Symbol</td>
+    <td>{{symbol}}</td>
+
+  </tr>
+  <tr>
+    <td>Treading Day</td>
+    <td>{{ltrday}}</td>
+
+  </tr>
+  <tr>
+    <td>Current Price/Today's Close</td>
+    <td>{{price}}</td>
+
+  </tr>
+  <tr>
+    <td>Open</td>
+    <td>{{open}}</td>
+
+  </tr>
+  <tr>
+    <td>Previous Close</td>
+    <td>{{pclose}}</td>
+
+  </tr>
+  <tr>
+    <td>High</td>
+    <td>{{high}}</td>
+
+  </tr>
+  <tr>
+    <td>Low</td>
+    <td>{{low}}</td>
+
+  </tr>
+  <tr>
+    <td>Change</td>
+    <td>{{change}}</td>
+
+  </tr>
+  <tr>
+    <td>Change in %</td>
+    <td>{{changep}}</td>
+
+  </tr>
+  <tr>
+    <td>Volume</td>
+    <td>{{volume}}</td>
+
+  </tr>
+</table>
+
+
+
+
+<div id="customer">
+<img src="{{ image }}"width=100%>
+  </div>
+
+<br>
+<img src="{{ image_pre }}"width=100%>
+
+
+CA
+The predicated AVG for Next Day {{ca}}
+/CA
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+{% endblock %}
+
+</body>
+
+</html>

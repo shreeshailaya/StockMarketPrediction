@@ -1,0 +1,444 @@
+def graph_data(request):
+    if request.method == 'POST':
+
+        search = request.POST['search']
+        stock_name = search + '.NS'
+        try:
+            df = web.DataReader(stock_name, data_source='yahoo', start='2019-01-01', end='2020-03-16')
+            plt.figure(figsize=(16, 8))
+            plt.title('Close Price History')
+            plt.plot(df['Close'])
+            plt.xlabel('Date', fontsize=18)
+            plt.ylabel('Close Price in RS', fontsize=18)
+            buffer = io.BytesIO()
+            canvas = pylab.get_current_fig_manager().canvas
+            canvas.draw()
+            pilImage = PIL.Image.frombytes("RGB", canvas.get_width_height(), canvas.tostring_rgb())
+            pilImage.save(buffer, "PNG")
+            pylab.close()
+        except Exception as e:
+            print('error')
+
+        return HttpResponse(buffer.getvalue(), content_type="image/png")
+    else:
+        return HttpResponse('Error')
+
+
+
+
+        {% url 'index' %}
+<div id="customer">
+<img src="{% url "showplt" %}" />
+  </div>
+
+
+
+  1 april BKUP
+
+  from django.shortcuts import render, redirect
+import requests
+import json
+from django.contrib import messages
+from .forms import Portfolio
+from django.shortcuts import HttpResponse
+
+import math
+import pandas_datareader as web
+import numpy as np
+import matplotlib.pyplot as plt
+import io
+from matplotlib.backends.backend_svg import FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib import pylab
+from pylab import *
+import PIL, PIL.Image
+
+plt.style.use('fivethirtyeight')
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def index(request):
+    if request.method == 'POST':
+        search = request.POST['search']
+
+        graph_data(search)
+
+
+        api_request = requests.get(
+            "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
+        # api_request1 = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
+        try:
+            api = json.loads(api_request.content)
+            st_name = api["Global Quote"]
+
+            # api_ca = json.loads(api_request1.content)
+            # api_ca2 = api_ca['Meta Data']
+            # api_ca3 = api_ca2['announcements']
+            # type(api_ca2)
+
+        except Exception as e:
+            st_name = "Error"
+
+        stock_info = {'symbol': st_name['01. symbol'],
+                      'open': st_name['02. open'],
+                      'high': st_name['03. high'],
+                      'low': st_name['04. low'],
+                      'price': st_name['05. price'],
+                      'volume': st_name['06. volume'],
+                      'ltrday': st_name['07. latest trading day'],
+                      'pclose': st_name['08. previous close'],
+                      'change': st_name['09. change'],
+                      'changep': st_name['10. change percent'],
+                      }
+
+        return render(request, 'index.html', stock_info)
+    else:
+        return render(request, 'index.html', {'note': 'Please Enter Name'})
+
+
+def add(request):
+    if request.method == 'POST':
+        f = Portfolio(request.POST or None)
+        if f.is_valid():
+            f.save()
+            # messages.success(request, "stock has been added")
+            return HttpResponse("Successfully Saved in DB")
+        else:
+            return HttpResponse("NOT Saved in DB")
+
+    else:
+        return render(request, 'add_stocks.html')
+
+
+def graph_data(request):
+    request_p = str(request)
+    ex = '.NS'
+    st_name = request_p + ex
+    print('STNAME:', st_name)
+    print(type(st_name))
+    print(type(request_p))
+    print(type(ex))
+    df = web.DataReader(st_name, data_source='yahoo', start='2019-01-01', end='2020-03-16')
+    print(df)
+    plt.figure(figsize=(12, 7))
+    plt.title('Close Price History')
+    plt.plot(df['Close'])
+    plt.xlabel('Date', fontsize=18)
+    plt.ylabel('Close Price in RS', fontsize=18)
+    buffer = io.BytesIO()
+    canvas = pylab.get_current_fig_manager().canvas
+    canvas.draw()
+    pil_image = PIL.Image.frombytes("RGB", canvas.get_width_height(), canvas.tostring_rgb())
+    pil_image.save(buffer, "PNG")
+    pylab.close()
+    response = HttpResponse(buffer.getvalue(), content_type="image/png")
+    return response
+
+
+def check(request):
+    st_name = request
+    print(request)
+    return st_name
+
+____________________________________________________________________________________________________________________________________________
+
+    5 april 2020 1:37
+
+    from django.shortcuts import render, redirect
+import requests
+import json
+from django.contrib import messages
+from .forms import Portfolio
+from django.shortcuts import HttpResponse
+
+import math
+import pandas_datareader as web
+import numpy as np
+import matplotlib.pyplot as plt
+import io
+from matplotlib.backends.backend_svg import FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib import pylab
+from pylab import *
+import base64, urllib
+import PIL, PIL.Image
+plt.style.use('fivethirtyeight')
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def index(request):
+    global globalsource
+    if request.method == 'POST':
+        search = request.POST['search']
+
+        request_p = search
+        ex = '.NS'
+        st_name = request_p + ex
+        print('STNAME:', st_name)
+        print(type(st_name))
+        print(type(request_p))
+        print(type(ex))
+        df = web.DataReader(st_name, data_source='yahoo', start='2019-01-01', end='2020-03-16')
+        print(df)
+        plt.figure(figsize=(12, 7))
+        plt.title('Close Price History')
+        plt.plot(df['Close'])
+        plt.xlabel('Date', fontsize=18)
+        plt.ylabel('Close Price in RS', fontsize=18)
+        buffer = io.BytesIO()
+        canvas = pylab.get_current_fig_manager().canvas
+        canvas.draw()
+        pil_image = PIL.Image.frombytes("RGB", canvas.get_width_height(), canvas.tostring_rgb())
+        pil_image.save(buffer, "PNG")
+        content_type = "Image/png"
+        buffer_content = buffer.getvalue()
+        graphic = (buffer_content, content_type)
+        buffer.seek(0)
+        string = base64.b64encode(buffer.read())
+        uri = 'data:image/png;base64,' + urllib.parse.quote(string)
+        pylab.close()
+        print(type(graphic))
+
+        api_request = requests.get(
+            "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
+        # api_request1 = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
+        try:
+            api = json.loads(api_request.content)
+            st_name = api["Global Quote"]
+
+            # api_ca = json.loads(api_request1.content)
+            # api_ca2 = api_ca['Meta Data']
+            # api_ca3 = api_ca2['announcements']
+            # type(api_ca2)
+
+        except Exception as e:
+            st_name = "Error"
+
+        stock_info = {'symbol': st_name['01. symbol'],
+                      'open': st_name['02. open'],
+                      'high': st_name['03. high'],
+                      'low': st_name['04. low'],
+                      'price': st_name['05. price'],
+                      'volume': st_name['06. volume'],
+                      'ltrday': st_name['07. latest trading day'],
+                      'pclose': st_name['08. previous close'],
+                      'change': st_name['09. change'],
+                      'changep': st_name['10. change percent'],
+                      'image': uri,
+                      }
+
+        return render(request, 'index.html', stock_info)
+    else:
+        return render(request, 'index.html', {'note': 'Please Enter Name'})
+
+
+def add(request):
+    if request.method == 'POST':
+        folio = Portfolio(request.POST or None)
+        if folio.is_valid():
+            folio.save()
+            # messages.success(request, "stock has been added")
+            return HttpResponse("Successfully Saved in DB")
+        else:
+            return HttpResponse("NOT Saved in DB")
+
+    else:
+        return render(request, 'add_stocks.html')
+
+________________________________________________________________________________________________________________________________________________________________________________
+        5 April 2020
+from django.shortcuts import render, redirect
+import requests
+import json
+from django.contrib import messages
+from .forms import Portfolio
+from django.shortcuts import HttpResponse
+from keras.models import Sequential
+from keras.layers import Dense, LSTM
+import math
+import pandas_datareader as web
+import numpy as np
+import matplotlib.pyplot as plt
+import io
+from matplotlib.backends.backend_svg import FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib import pylab
+from pylab import *
+import base64, urllib
+import PIL, PIL.Image
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+import os
+
+plt.style.use('fivethirtyeight')
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def index(request):
+    global globalsource
+    if request.method == 'POST':
+        search = request.POST['search']
+
+        request_p = search
+        ex = '.NS'
+        st_name = request_p + ex
+        print('STNAME:', st_name)
+        print(type(st_name))
+        print(type(request_p))
+        print(type(ex))
+        df = web.DataReader(st_name, data_source='yahoo', start='2019-01-01', end='2020-03-16')
+        print(df)
+        plt.figure(figsize=(16, 8))
+        plt.title('Close Price History')
+        plt.plot(df['Close'])
+        plt.xlabel('Date', fontsize=18)
+        plt.ylabel('Close Price in RS', fontsize=18)
+        buffer = io.BytesIO()
+        canvas = pylab.get_current_fig_manager().canvas
+        canvas.draw()
+        pil_image = PIL.Image.frombytes("RGB", canvas.get_width_height(), canvas.tostring_rgb())
+        pil_image.save(buffer, "PNG")
+        buffer.seek(0)
+        string = base64.b64encode(buffer.read())
+        uri = 'data:image/png;base64,' + urllib.parse.quote(string)
+        pylab.close()
+
+        # create data frame with only the close
+        data = df.filter(['Close'])
+        # convert dataframe to numpy array
+        dataset = data.values
+        # Get the number of rows to tain the model on 80%
+        training_data_len = math.ceil(len(dataset) * .8)
+        training_data_len
+        # scale the data
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaled_data = scaler.fit_transform(dataset)
+        scaled_data
+        # CREATE TRAINING DATASET
+        # CREATE SCALED TRAINING DATASET
+        train_data = scaled_data[0:training_data_len, :]
+        # SPLIT THE DATA INTO XTRAIN AND YTRAIN
+        x_train = []
+        y_train = []
+
+        for i in range(60, len(train_data)):
+            x_train.append(train_data[i - 60:i, 0])
+            y_train.append(train_data[i, 0])
+            if i <= 61:
+                print(x_train)
+                print(y_train)
+        # CONVERT THE X_TRAIN AND Y_TRAIN TO NUMPY ARRAY
+        x_train = np.array(x_train)
+        y_train = np.array(y_train)
+        # RESHAPE THE DATA
+        # 2D TO 3D
+        x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
+        # BUILD LSTM MODEL
+        model = Sequential()
+        model.add(LSTM(50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+        model.add(LSTM(50, return_sequences=False))
+        model.add(Dense(25))
+        model.add(Dense(1))
+        # COMPILE THE MODEL
+        model.compile(optimizer='adam', loss='mean_squared_error')
+        # TRAIN THE MODELS
+        model.fit(x_train, y_train, batch_size=1, epochs=1)
+        # CREATE TESTING DATASET
+        # CREATE A ARRAY CONTAINING SCALED VALUES
+        test_data = scaled_data[training_data_len - 60:, :]
+        # CREATE THE DATASET X_TEST AND Y_TEST
+        x_test = []
+        y_test = dataset[training_data_len:, :]
+        for i in range(60, len(test_data)):
+            x_test.append(test_data[i - 60:i, 0])
+        # CONVERT DATA INTO NUMPY ARRAY
+        x_test = np.array(x_test)
+        # RESHAPE THE DATE
+        x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
+        # Get the models predicted price values
+        predictions = model.predict(x_test)
+        predictions = scaler.inverse_transform(predictions)
+        # Get the root mean squared error (RMSE)
+        rmse = np.sqrt(np.mean(((predictions - y_test) ** 2)))
+        rmse
+
+        # Plot the data
+        train = data[:training_data_len]
+        valid = data[training_data_len:]
+        valid['Predictions'] = predictions
+        # Visualize the data
+        plt.figure(figsize=(16, 8))
+        plt.title('Model')
+        plt.xlabel('Date', fontsize=18)
+        plt.ylabel('Close Price USD ($)', fontsize=18)
+        plt.plot(train['Close'])
+        plt.plot(valid[['Close', 'Predictions']])
+        plt.legend(['Train', 'Val', 'Predictions'], loc='lower right')
+        buffer = io.BytesIO()
+        canvas = pylab.get_current_fig_manager().canvas
+        canvas.draw()
+        pil_image = PIL.Image.frombytes("RGB", canvas.get_width_height(), canvas.tostring_rgb())
+        pil_image.save(buffer, "PNG")
+        buffer.seek(0)
+        string = base64.b64encode(buffer.read())
+        uri_pre = 'data:image/png;base64,' + urllib.parse.quote(string)
+        pylab.close()
+
+
+        api_request = requests.get(
+            "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
+        # api_request1 = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
+        try:
+            api = json.loads(api_request.content)
+            st_name = api["Global Quote"]
+
+            # api_ca = json.loads(api_request1.content)
+            # api_ca2 = api_ca['Meta Data']
+            # api_ca3 = api_ca2['announcements']
+            # type(api_ca2)
+
+        except Exception as e:
+            st_name = "Error"
+
+        stock_info = {'symbol': st_name['01. symbol'],
+                      'open': st_name['02. open'],
+                      'high': st_name['03. high'],
+                      'low': st_name['04. low'],
+                      'price': st_name['05. price'],
+                      'volume': st_name['06. volume'],
+                      'ltrday': st_name['07. latest trading day'],
+                      'pclose': st_name['08. previous close'],
+                      'change': st_name['09. change'],
+                      'changep': st_name['10. change percent'],
+                      'image': uri,
+                      'image_pre': uri_pre,
+                      'valid': predictions,
+                      }
+
+        return render(request, 'index.html', stock_info)
+    else:
+        return render(request, 'index.html', {'note': 'Please Enter Name'})
+
+
+def add(request):
+    if request.method == 'POST':
+        folio = Portfolio(request.POST or None)
+        if folio.is_valid():
+            folio.save()
+            # messages.success(request, "stock has been added")
+            return HttpResponse("Successfully Saved in DB")
+        else:
+            return HttpResponse("NOT Saved in DB")
+
+    else:
+        return render(request, 'add_stocks.html')
+_______________________________________________________________________________________________________________________________________________________________________________

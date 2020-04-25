@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Stocks</title>
+</head>
+<body>
+{% block content %}
+
+<form action="{% url 'add' %}" method="POST">
+  {% csrf_token %}
+  <input type="text" name="add_stock" placeholder="Enter Company Name or Symbol">
+    <input type="text" name="add_stock_price" placeholder="Price">
+    <button type="submit">Submit</button>
+</form>
+{{ add }}
+{% endblock %}
+</body>
+</html>
