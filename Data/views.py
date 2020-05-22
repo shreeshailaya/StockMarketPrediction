@@ -2,11 +2,11 @@ import base64
 import io
 import json
 import urllib
+import requests
 import PIL
 import PIL.Image
 import pandas as pd
 import pandas_datareader as web
-import requests
 from django.shortcuts import HttpResponse
 from django.shortcuts import render
 from keras.layers import Dense, LSTM
@@ -15,6 +15,8 @@ from matplotlib import pylab
 from pylab import *
 from sklearn.preprocessing import MinMaxScaler
 from .forms import Portfolio
+from textblob import TextBlob
+from bs4 import BeautifulSoup
 from django.contrib.auth.models import auth
 
 plt.style.use('fivethirtyeight')
@@ -47,7 +49,6 @@ def index(request):
         end_date = datetime.date.today() - datetime.timedelta(days=1)
         end_date = end_date.strftime('%Y-%m-%d')
         df = web.DataReader(st_name, data_source='yahoo', start='2018-01-01', end=end_date)
-        print(df)
         plt.figure(figsize=(16, 8))
         plt.title('Close Price History')
         plt.plot(df['Close'])
@@ -65,7 +66,7 @@ def index(request):
         # volume graph
         plt.figure(figsize=(16, 8))
         plt.title('Volume')
-        #plt.bar(df['Volume'])
+        # plt.bar(df['Volume'])
         df['Volume'].plot(kind='bar')
         plt.xlabel('Date', fontsize=18)
         plt.ylabel('Volume in Cr', fontsize=18)
@@ -78,6 +79,8 @@ def index(request):
         string = base64.b64encode(buffer.read())
         uri1 = 'data:image/png;base64,' + urllib.parse.quote(string)
         pylab.close()
+
+        # ANN---------------------------------------------------------------------------------------------------
 
         # create data frame with only the close
         data = df.filter(['Close'])
@@ -98,9 +101,6 @@ def index(request):
         for i in range(60, len(train_data)):
             x_train.append(train_data[i - 60:i, 0])
             y_train.append(train_data[i, 0])
-            if i <= 61:
-                print(x_train)
-                print(y_train)
         # CONVERT THE X_TRAIN AND Y_TRAIN TO NUMPY ARRAY
         x_train = np.array(x_train)
         y_train = np.array(y_train)
@@ -134,6 +134,8 @@ def index(request):
         predictions = scaler.inverse_transform(predictions)
         # Get the root mean squared error (RMSE)
         rmse = np.sqrt(np.mean(((predictions - y_test) ** 2)))
+
+        # ANN Prediction Plot-----------------------------------------------------------------------------------
 
         # Plot the data
         train = data[:training_data_len]
@@ -178,12 +180,14 @@ def index(request):
         # undo the scaling
         pred_price = scaler.inverse_transform(pred_price)
 
+        # SMA Chart Logic -----------------------------------------------------------------------------
+
         def sma_chart():
             # create 30 days Moving Avarge
             SMA30 = pd.DataFrame()
             SMA30['Adj Close price'] = df['Adj Close'].rolling(window=30).mean()
             SMA200 = pd.DataFrame()
-            SMA200['Adj Close price'] = df['Adj Close'].rolling(window=200).mean()
+            SMA200['Adj Close price'] = df['Adj Close'].rolling(window=100).mean()
             data_a = pd.DataFrame()
             data_a['Adj Close'] = df['Adj Close']
             data_a['SMA30'] = SMA30['Adj Close price']
@@ -243,9 +247,78 @@ def index(request):
             pylab.close()
             return sma_ch
 
+        # News---------------------------------------------------------------------------------------------------------
+        def news_fetch():
+            def percentage(part, whole):
+                return 100 * float(part) / float(whole)
+
+            url = 'https://www.bing.com/news/search?q=' + search + '+share&qs=n&form=NWRFSH'
+
+            headers = {
+                "User-Agent": 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
+            }
+            page = requests.get(url, headers)
+            soup = BeautifulSoup(page.content, 'html.parser')
+            noOfSearch = 10
+            positive = 0
+            negative = 0
+            neutral = 0
+            polarity = 0
+            news_dir = {}
+
+            for x in range(noOfSearch):
+                title = soup.findAll('a', {'class': 'title'})[x]
+                analysis = TextBlob(title.text)
+                source = soup.findAll('div', {'class': 'source'})[x]
+                news_dir[title.text] = source
+
+                polarity += analysis.sentiment.polarity
+
+                if analysis.sentiment.polarity == 0.000:
+                    neutral += 1
+
+                elif analysis.sentiment.polarity < 0.000:
+                    negative += 1
+
+                elif analysis.sentiment.polarity > 0.000:
+                    positive += 1
+
+            positive = percentage(positive, noOfSearch)
+            negative = percentage(negative, noOfSearch)
+            neutral = percentage(neutral, noOfSearch)
+
+            if polarity == 0:
+                print('Neutral')
+            elif polarity < 0.000:
+                print('Negative')
+            elif polarity > 0.000:
+                print('Posative')
+
+            labels = ['Positive [' + str(positive) + '%]', 'Negative [' + str(negative) + '%]',
+                      'Neutral [' + str(neutral) + '%]']
+            sizes = [positive, neutral, negative]
+            colors = ['yellowgreen', 'lightgreen', 'darkgreen']
+            patches, texts = plt.pie(sizes, colors=colors, startangle=90)
+            plt.legend(patches, labels, loc="best")
+            plt.title('How people are reacting on ')
+            plt.axis('equal')
+            plt.tight_layout()
+            buffer_a = io.BytesIO()
+            canvas_a = pylab.get_current_fig_manager().canvas
+            canvas_a.draw()
+            pil_image_a = PIL.Image.frombytes("RGB", canvas_a.get_width_height(), canvas_a.tostring_rgb())
+            pil_image_a.save(buffer_a, "PNG")
+            buffer_a.seek(0)
+            string_a = base64.b64encode(buffer_a.read())
+            news_feed = 'data:image/png;base64,' + urllib.parse.quote(string_a)
+            pylab.close()
+
+            return news_feed, news_dir
+
+        news = news_fetch()
+        # json-----------------------------------------------------------------------------------------------------------------------------------------------------
         api_request = requests.get(
             "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
-        # api_request1 = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
         try:
             api = json.loads(api_request.content)
             st_name = api["Global Quote"]
@@ -273,6 +346,8 @@ def index(request):
                       'ca': pred_price,
                       'uri1': uri1,
                       'sma_ch': sma_chart(),
+                      'pia_chart': news[0],
+                      'news': news[1],
                       }
 
         return render(request, 'index.html', stock_info)
