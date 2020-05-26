@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="UTF-8">
 <title>Welocme to DataColl</title>
-</head>
 <body>
 {% block content %}
 
@@ -16,8 +15,7 @@
 
 {{ note }}
 
-</body>
-</html>
+
 <br>
 <br>
 <br>
@@ -70,6 +68,48 @@
 </table>
 <br>
 <br>
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://in.tradingview.com" rel="noopener" target="_blank"><span class="blue-text">Ticker Tape</span></a> by TradingView</div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "Nasdaq 100"
+    },
+    {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+    },
+    {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "BTC/USD"
+    },
+    {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "ETH/USD"
+    },
+    {
+      "description": "NIFTY50",
+      "proName": "NSE:NIFTY"
+    }
+  ],
+  "colorTheme": "light",
+  "isTransparent": true,
+  "displayMode": "adaptive",
+  "locale": "in"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
 <div id="image">
 <img src="{{ image }}"width=100%>
   </div>
@@ -80,6 +120,47 @@
   </div>
 <br>
 <br>
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "Nasdaq 100"
+    },
+    {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+    },
+    {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "BTC/USD"
+    },
+    {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "ETH/USD"
+    },
+    {
+      "description": "NIFTY50",
+      "proName": "NSE:NIFTY"
+    }
+  ],
+  "colorTheme": "light",
+  "isTransparent": true,
+  "largeChartUrl": "http://34.221.203.31/",
+  "displayMode": "adaptive",
+  "locale": "in"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
 <img src="{{ image_pre }}"width=100%>
 <br>
 <br>
@@ -88,30 +169,217 @@ The predicated AVG for Next Day {{ca}}
 /CA
 <br>
 <br>
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "Nasdaq 100"
+    },
+    {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+    },
+    {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "BTC/USD"
+    },
+    {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "ETH/USD"
+    },
+    {
+      "description": "NIFTY50",
+      "proName": "NSE:NIFTY"
+    }
+  ],
+  "colorTheme": "light",
+  "isTransparent": true,
+  "largeChartUrl": "http://34.221.203.31/",
+  "displayMode": "adaptive",
+  "locale": "in"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
 <div id="">
 <img src="{{ sma_ch }}"width=100%>
   </div>
 <br>
-<div id="">
-<img src="{{ pia_chart }}"width=50%>
-  </div>
-{% for new in news %}
-{{new}}
-{{new.index}}
-<br>
-<br>
-<br>
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "Nasdaq 100"
+    },
+    {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+    },
+    {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "BTC/USD"
+    },
+    {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "ETH/USD"
+    },
+    {
+      "description": "NIFTY50",
+      "proName": "NSE:NIFTY"
+    }
+  ],
+  "colorTheme": "light",
+  "isTransparent": true,
+  "largeChartUrl": "http://34.221.203.31/",
+  "displayMode": "adaptive",
+  "locale": "in"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
+{% for new, source in news.items %}
+
+
+<div class="news_container">
+  <img src="https://source.unsplash.com/random" alt="Avatar" style="width:90px">
+  <p><span>{{new}}</span></p>
+  <p>Source/Time:- {{source}}</p>
+</div>
+
+
 {% endfor %}
 
+
+
+
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "Nasdaq 100"
+    },
+    {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+    },
+    {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "BTC/USD"
+    },
+    {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "ETH/USD"
+    },
+    {
+      "description": "NIFTY50",
+      "proName": "NSE:NIFTY"
+    }
+  ],
+  "colorTheme": "light",
+  "isTransparent": true,
+  "largeChartUrl": "http://34.221.203.31/",
+  "displayMode": "adaptive",
+  "locale": "in"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
+<!-- TradingView Widget END -->
+
+
+
+
+<style>
+.news_container {
+border: 2px solid #ccc;
+background-color: #eee;
+border-radius: 5px;
+padding: 16px;
+margin: 16px 0
+}
+
+.news_container::after {
+content: "";
+clear: both;
+display: table;
+}
+
+.news_container img {
+float: left;
+margin-right: 20px;
+border-radius: 50%;
+}
+
+.news_container span {
+font-size: 20px;
+margin-right: 15px;
+}
+
+@media (max-width: 500px) {
+.news_container {
+    text-align: center;
+}
+.news_container img {
+    margin: auto;
+    float: none;
+    display: block;
+}
+}
+</style>
+
+<div id="">
+<img src="{{ pia_chart }}"width=100% height="500">
+</div>
+
+
 <br>
-    <div class="loader-wrapper">
-      <span class="loader"><span class="loader-inner"></span></span>
-    </div>
-    <script>
-        $(window).on("load",function(){
-          $(".loader-wrapper").fadeOut("slow");
-        });
-    </script>
+<br>
+<br>
+
+
+
+
+<script>
+<br>
+  <div class="loader-wrapper">
+    <span class="loader"><span class="loader-inner"></span></span>
+  </div>
+  <script>
+      $(window).on("load",function(){
+        $(".loader-wrapper").fadeOut("slow");
+      });
+
+
+
+</script>
 
 {% endblock %}
 

@@ -270,7 +270,7 @@ def index(request):
                 title = soup.findAll('a', {'class': 'title'})[x]
                 analysis = TextBlob(title.text)
                 source = soup.findAll('div', {'class': 'source'})[x]
-                news_dir[title.text] = source
+                news_dir[title.text] = source.text
 
                 polarity += analysis.sentiment.polarity
 
@@ -296,11 +296,11 @@ def index(request):
 
             labels = ['Positive [' + str(positive) + '%]', 'Negative [' + str(negative) + '%]',
                       'Neutral [' + str(neutral) + '%]']
-            sizes = [positive, neutral, negative]
-            colors = ['yellowgreen', 'lightgreen', 'darkgreen']
+            sizes = [positive, negative, neutral]
+            colors = ['lightblue', 'red', '#ffc107c2']
             patches, texts = plt.pie(sizes, colors=colors, startangle=90)
-            plt.legend(patches, labels, loc="best")
-            plt.title('How people are reacting on ')
+            plt.legend(patches, labels, loc="best", prop={'size': 6})
+            plt.title('Latest News Analysis ')
             plt.axis('equal')
             plt.tight_layout()
             buffer_a = io.BytesIO()
