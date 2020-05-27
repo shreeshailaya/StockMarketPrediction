@@ -180,6 +180,13 @@ def index(request):
         # undo the scaling
         pred_price = scaler.inverse_transform(pred_price)
 
+        if pred_price[0][0] < df['Close'][len(df)-1]:
+            pred_feedback = 'Sell'
+        elif pred_price[0][0] > df['Close'][len(df)-1]:
+            pred_feedback = 'Buy'
+        else:
+            pred_feedback = 'Hold'
+
         # SMA Chart Logic -----------------------------------------------------------------------------
 
         def sma_chart():
@@ -192,6 +199,14 @@ def index(request):
             data_a['Adj Close'] = df['Adj Close']
             data_a['SMA30'] = SMA30['Adj Close price']
             data_a['SMA200'] = SMA200['Adj Close price']
+            p = len(data_a)
+
+            if data_a['SMA200'][p - 1] > df['Close'][len(df)-1]:
+                sma_feedback = "Sell"
+            elif data_a['SMA200'][p - 1] < df['Close'][len(df)-1]:
+                sma_feedback = "Buy"
+            else:
+                sma_feedback = "Hold"
 
             def buy_sell(data_a):
                 sigPriceBuy = []
@@ -245,14 +260,16 @@ def index(request):
             string_a = base64.b64encode(buffer_a.read())
             sma_ch = 'data:image/png;base64,' + urllib.parse.quote(string_a)
             pylab.close()
-            return sma_ch
+            return sma_ch, sma_feedback
+
+        sma = sma_chart()
 
         # News---------------------------------------------------------------------------------------------------------
         def news_fetch():
             def percentage(part, whole):
                 return 100 * float(part) / float(whole)
 
-            url = 'https://www.bing.com/news/search?q=' + search + '+share&qs=n&form=NWRFSH'
+            url = 'https://www.bing.com/news/search?q=' + search + '&qs=n&form=NWRFSH'
 
             headers = {
                 "User-Agent": 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
@@ -288,11 +305,11 @@ def index(request):
             neutral = percentage(neutral, noOfSearch)
 
             if polarity == 0:
-                print('Neutral')
+                news_feedback = 'Hold'
             elif polarity < 0.000:
-                print('Negative')
+                news_feedback = 'Sell'
             elif polarity > 0.000:
-                print('Posative')
+                news_feedback = 'Buy'
 
             labels = ['Positive [' + str(positive) + '%]', 'Negative [' + str(negative) + '%]',
                       'Neutral [' + str(neutral) + '%]']
@@ -313,7 +330,7 @@ def index(request):
             news_feed = 'data:image/png;base64,' + urllib.parse.quote(string_a)
             pylab.close()
 
-            return news_feed, news_dir
+            return news_feed, news_dir, news_feedback
 
         news = news_fetch()
         # json-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -322,12 +339,6 @@ def index(request):
         try:
             api = json.loads(api_request.content)
             st_name = api["Global Quote"]
-
-            # api_ca = json.loads(api_request1.content)
-            # api_ca2 = api_ca['Meta Data']
-            # api_ca3 = api_ca2['announcements']
-            # type(api_ca2)
-
         except Exception as e:
             st_name = "Error"
 
@@ -345,9 +356,12 @@ def index(request):
                       'image_pre': uri_pre,
                       'ca': pred_price,
                       'uri1': uri1,
-                      'sma_ch': sma_chart(),
+                      'sma_ch': sma[0],
                       'pia_chart': news[0],
                       'news': news[1],
+                      'news_feedback': news[2],
+                      'pred_feedback': pred_feedback,
+                      'sma_feedback': sma[1]
                       }
 
         return render(request, 'index.html', stock_info)
@@ -383,3 +397,23 @@ def sCheck(request):
         sd = glass.append(i)
 
     return render(request, 'sCheck.html', {'ex': sd})
+
+
+'''
+        if pred_price[0][0] < st_name['05. price']:
+            pred_feedback = 'Sell'
+        elif pred_price[0][0] > st_name['05. price']:
+            pred_feedback = 'Buy'
+        else:
+            pred_feedback = 'Hold'
+            
+            
+            
+            
+                    if data_a['SMA200'][p - 1] > st_name['05. price']:
+                sma_feedback = 'Sell'
+            elif data_a['SMA200'][p - 1] < st_name['05. price']:
+                sma_feedback = 'Buy'
+            else:
+                sma_feedback = 'Hold'
+'''
