@@ -41,6 +41,7 @@ def index(request):
     # if request.user.is_authenticated:
     if request.method == 'POST':
         search = request.POST['search']
+        st_dis_name = search
         search = search.rpartition('.')[0]
 
         request_p = search
@@ -361,7 +362,8 @@ def index(request):
                       'news': news[1],
                       'news_feedback': news[2],
                       'pred_feedback': pred_feedback,
-                      'sma_feedback': sma[1]
+                      'sma_feedback': sma[1],
+                      'dis_name': st_dis_name,
                       }
 
         return render(request, 'index.html', stock_info)
@@ -388,15 +390,8 @@ def add(request):
 
 
 def sCheck(request):
-    exx = '.NS'
-    dfd = web.DataReader('RELIANCE.NS', data_source='yahoo', start='2019-01-01', end='2020-01-01')
-    closeP = dfd.filter(['Close'])
-    xyz = closeP.values
-    glass = {}
-    for i in range(xyz):
-        sd = glass.append(i)
 
-    return render(request, 'sCheck.html', {'ex': sd})
+    return render(request, 'sCheck.html')
 
 
 '''

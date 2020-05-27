@@ -15,6 +15,48 @@
 
 {{ note }}
 
+<br>
+<br>
+<strong style="font-size:20px;" >{{ dis_name }}</strong>
+<img src="https://i.marketsmojo.com/dots-bulish.png" height="40" width="40">
+{% if pred_feedback == 'Buy' %}
+<strong style="color: green; font-size:20px" >{{ pred_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-green.png" height="40" width="40">
+{% elif pred_feedback == 'Sell' %}
+<strong style="color: red; font-size:20px" >{{ pred_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-red.png" height="40" width="40">
+{% else %}
+<strong style="color: yellow; font-size:20px" >{{ pred_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-org.png" height="40" width="40">
+{% endif %}
+
+
+{% if sma_feedback == 'Buy' %}
+<strong style="color: green; font-size:20px" >{{ sma_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-green.png" height="40" width="40">
+{% elif sma_feedback == 'Sell' %}
+<strong style="color: red; font-size:20px" >{{ sma_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-red.png" height="40" width="40">
+{% else %}
+<strong style="color: yellow; font-size:20px" >{{ news_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-org.png" height="40" width="40">
+{% endif %}
+
+
+{% if news_feedback == 'Buy' %}
+<strong style="color: green; font-size:20px" >{{ news_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-green.png" height="40" width="40">
+{% elif news_feedback == 'Sell' %}
+<strong style="color: red; font-size:20px" >{{ news_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-red.png" height="40" width="40">
+{% else %}
+<strong style="color: yellow; font-size:20px" >{{ news_feedback }}</strong>
+<img src="https://i.marketsmojo.com/dots-org.png" height="40" width="40">
+{% endif %}
+
+<img src="https://i.marketsmojo.com/dots-bulish1.png" height="40" width="40">
+
+
 
 <br>
 <br>
@@ -390,9 +432,6 @@ margin-right: 15px;
 <br>
 <br>
 <br>
-
-
-
 
 <script>
 <br>
