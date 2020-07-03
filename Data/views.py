@@ -181,9 +181,9 @@ def index(request):
         # undo the scaling
         pred_price = scaler.inverse_transform(pred_price)
 
-        if pred_price[0][0] < df['Close'][len(df)-1]:
+        if pred_price[0][0] < df['Close'][len(df) - 1]:
             pred_feedback = 'Sell'
-        elif pred_price[0][0] > df['Close'][len(df)-1]:
+        elif pred_price[0][0] > df['Close'][len(df) - 1]:
             pred_feedback = 'Buy'
         else:
             pred_feedback = 'Hold'
@@ -202,9 +202,9 @@ def index(request):
             data_a['SMA200'] = SMA200['Adj Close price']
             p = len(data_a)
 
-            if data_a['SMA200'][p - 1] > df['Close'][len(df)-1]:
+            if data_a['SMA200'][p - 1] > df['Close'][len(df) - 1]:
                 sma_feedback = "Sell"
-            elif data_a['SMA200'][p - 1] < df['Close'][len(df)-1]:
+            elif data_a['SMA200'][p - 1] < df['Close'][len(df) - 1]:
                 sma_feedback = "Buy"
             else:
                 sma_feedback = "Hold"
@@ -289,6 +289,7 @@ def index(request):
                 analysis = TextBlob(title.text)
                 source = soup.findAll('div', {'class': 'source'})[x]
                 news_dir[title.text] = source.text
+                news_url = soup.findAll('a', href=True)[x]
 
                 polarity += analysis.sentiment.polarity
 
@@ -331,12 +332,12 @@ def index(request):
             news_feed = 'data:image/png;base64,' + urllib.parse.quote(string_a)
             pylab.close()
 
-            return news_feed, news_dir, news_feedback
+            return news_feed, news_dir, news_feedback, news_url
 
         news = news_fetch()
         # json-----------------------------------------------------------------------------------------------------------------------------------------------------
         api_request = requests.get(
-            "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=NSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
+            "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=BSE:" + search + "&apikey=BP39EYKNTFWF2FOF")
         try:
             api = json.loads(api_request.content)
             st_name = api["Global Quote"]
@@ -364,6 +365,7 @@ def index(request):
                       'pred_feedback': pred_feedback,
                       'sma_feedback': sma[1],
                       'dis_name': st_dis_name,
+                      'news_url': news[3]
                       }
 
         return render(request, 'index.html', stock_info)
@@ -390,7 +392,6 @@ def add(request):
 
 
 def sCheck(request):
-
     return render(request, 'sCheck.html')
 
 
